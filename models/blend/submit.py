@@ -52,8 +52,11 @@ pred_df['prediction'] = .9*pred_df['prediction_gbm'] + .1*pred_df['prediction_nn
 
 gb = pred_df.groupby('order_id')
 dfs, order_ids = zip(*[(df, key) for key, df in gb])
+
 p = Pool(cpu_count())
 true_products, predicted_products = zip(*p.map(select_products, dfs))
+
+# true_products, predicted_products = zip(*map(select_products, dfs))
 
 pred_df = pd.DataFrame({'products': predicted_products, 'true_products': true_products, 'order_id': order_ids})
 pred_df[['order_id', 'products']].to_csv('sub.csv', index=False)

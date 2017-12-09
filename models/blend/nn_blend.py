@@ -87,6 +87,9 @@ class nn(TFBaseModel):
 
         h = dense_layer(self.features, self.hidden_units, activation=tf.nn.relu, scope='dense1')
         h = tf.concat([h, self.features], axis=1)
+        h = dense_layer(self.features, self.hidden_units, activation=tf.nn.relu, scope='dense3')
+        h = tf.concat([h, self.features], axis=1)
+
         y_hat = tf.squeeze(dense_layer(h, 1, activation=tf.nn.sigmoid, scope='dense2'), 1)
         loss = log_loss(self.label, y_hat)
 

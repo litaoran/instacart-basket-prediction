@@ -51,7 +51,6 @@ if __name__ == '__main__':
         next_reorders = map(int, next_reorders.split('_'))
 
         for product_id in product_set:
-
             user_ids.append(user_id)
             product_ids.append(product_id)
             labels.append(int(product_id in next_product_set) if eval_set == 'train' else -1)
