@@ -7,7 +7,7 @@ To run the project, just use sh run.sh to run a sequence of python code which in
 
 # Requirement
 ## hardware resource:
-        aws g3.4xlarge :
+        AWS instance type: g3.4xlarge :
         GPU: 8 GB
         Memory:	122 GB
         Disk: > 50 GB

@@ -16,19 +16,19 @@ product_df = product_df.merge(orders[['user_id', 'order_id']], how='left', on='u
 product_df['is_none'] = (product_df['product_id'] == 0).astype(int)
 
 
-# # feature representations
-# prefix = 'rnn_product'
-# h_df = pd.DataFrame(np.load('../rnn_product/predictions/final_states.npy')).add_prefix('{}_h'.format(prefix))
-# h_df['user_id'] = np.load('../rnn_product/predictions/user_ids.npy')
-# h_df['product_id'] = np.load('../rnn_product/predictions/product_ids.npy')
-# product_df = product_df.merge(h_df, how='left', on=['user_id', 'product_id'])
-#
-# prefix = 'rnn_aisle'
-# h_df = pd.DataFrame(np.load('../rnn_aisle/predictions/final_states.npy')).add_prefix('{}_h'.format(prefix))
-# h_df['user_id'] = np.load('../rnn_aisle/predictions/user_ids.npy')
-# h_df['aisle_id'] = np.load('../rnn_aisle/predictions/aisle_ids.npy')
-# h_df['{}_prediction'.format(prefix)] = np.load('../rnn_aisle/predictions/predictions.npy')
-# product_df = product_df.merge(h_df, how='left', on=['user_id', 'aisle_id']).fillna(-1)
+# feature representations
+prefix = 'rnn_product'
+h_df = pd.DataFrame(np.load('../rnn_product/predictions/final_states.npy')).add_prefix('{}_h'.format(prefix))
+h_df['user_id'] = np.load('../rnn_product/predictions/user_ids.npy')
+h_df['product_id'] = np.load('../rnn_product/predictions/product_ids.npy')
+product_df = product_df.merge(h_df, how='left', on=['user_id', 'product_id'])
+
+prefix = 'rnn_aisle'
+h_df = pd.DataFrame(np.load('../rnn_aisle/predictions/final_states.npy')).add_prefix('{}_h'.format(prefix))
+h_df['user_id'] = np.load('../rnn_aisle/predictions/user_ids.npy')
+h_df['aisle_id'] = np.load('../rnn_aisle/predictions/aisle_ids.npy')
+h_df['{}_prediction'.format(prefix)] = np.load('../rnn_aisle/predictions/predictions.npy')
+product_df = product_df.merge(h_df, how='left', on=['user_id', 'aisle_id']).fillna(-1)
 
 prefix = 'rnn_department'
 h_df = pd.DataFrame(np.load('../rnn_department/predictions/final_states.npy')).add_prefix('{}_h'.format(prefix))
