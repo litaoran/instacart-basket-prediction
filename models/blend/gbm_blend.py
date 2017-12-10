@@ -22,8 +22,7 @@ product_df['label'] = label
 del order_id, product_id, features, feature_names, label
 gc.collect()
 
-drop_cols = [i for i in product_df.columns if i.startswith('sgns') or i.startswith('nnmf')]
-drop_cols += ['order_id', 'product_id', 'label']
+drop_cols = ['order_id', 'product_id', 'label']
 
 # training
 train_df = product_df[product_df['label'] != -1]

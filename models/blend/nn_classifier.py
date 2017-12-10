@@ -6,79 +6,83 @@ import pandas as pd
 import os
 
 class nn_model():
-    def __init__(self, data_dir):
+    def __init__(self):
 
-        self.get_data(data_dir)
+        self.df = None
+        self.training_df = None
+        self.test_df = None
+        self.data_cols = None
+        self.data_dim = 0
+        self.model = None
 
+        self.get_data()
 
-        # self.data_dim = self.df['features'].shape[1]
-        # self.NNmodel = self.build_model()
+    def get_data(self):
+        self.data_cols =np.load(os.path.join(data_dir, 'feature_names.npy'))
+        self.data_dim = len(self.data_cols)
+        print self.data_dim
 
-    def get_data(self, data_dir):
-        print "start getting data"
+        self.df = pd.DataFrame(columns=self.data_cols, data=np.load(os.path.join(data_dir, 'features.npy')))
+
         data_cols = [
             'order_id',
             'product_id',
-            'features'
             'label'
         ]
-        data 
-        data = data.concate np.load(os.path.join(data_dir, '{}.npy'.format(i))) for i in data_cols]
 
-        data_dict = {}
         for col in data_cols:
-            print col
-            data_dict['a'] = np.load(os.path.join(data_dir, '{}.npy'.format(col)))
-            # data_dict[col] = data_dict[col].sample(3)
-            print "finish"
-            print data_dict[col].shape
+            self.df[col] = np.load(os.path.join(data_dir, '{}.npy'.format(col)))
 
-        df = pd.DataFrame(data=data_dict)
-        df = pd.DataFrame(columns=data_cols, data=data)
+        self.training_df = self.df.loc[self.df['label'] != -1]
+        self.test_df = self.df.loc[self.df['label'] == -1]
 
-        # print df
-        #
-        # self.training_df = df.loc[df['label'] != -1]
-        # self.test_df = df.loc[df['label'] == -1]
-        # print "finishing getting data"
+        print len(self.df)
+        print len(self.training_df)
+        print len(self.test_df)
+        print 'finishing getting data'
+        type(self.training_df['label'][0])
+        # self.training_df['label'] = self.training_df['label'].apply(np.float)
 
 
     def build_model(self):
         print "start for modeling building"
-        model = Sequential()
-        model.add(Dense(units=64, activation='relu', input_dim=self.data_dim))
-        model.add(Dense(units=1, activation='sigmoid'))
+        self.model = Sequential()
+        self.model.add(Dense(units=64, activation='relu', input_dim=self.data_dim))
+        self.model.add(Dense(units=1, activation='sigmoid'))
 
-        model.compile(loss='categorical_crossentropy',
+        self.model.compile(loss='binary_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
 
-        print "start for model training"
-        model.fit(self.df['features'].values, self.df['label'].values, epochs=1, batch_size=4096, steps_per_epoch=150, validation_split=0.1)
+        self.model.fit(self.training_df[self.data_cols].values, self.training_df['label'].values, epochs=1, batch_size=4096,  validation_split=0.1)
 
+        # print "start for evalution"
+        # scores = self.model.evaluate(self.df[self.data_cols].values, self.df['label'].values)
+        # print("\n%s: %.2f%%" % (self.model.metrics_names[1], scores[1]*100))
 
-        print "start for evalution"
-        scores = model.evaluate(self.df['features'].values, self.df['label'].values)
-
-        print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-        return model
-
+        print 'finishing building model'
 
     def predict(self):
-        # classes = model.predict(x_test, batch_size=128)
-        return
 
+        classes = self.model.predict(self.test_df[self.data_cols].values, batch_size=4096)
+        self.test_df['prediction_nn'] = classes
+
+        np.save(os.path.join(dirname, 'order_ids.npy'), self.test_df['order_id'])
+        np.save(os.path.join(dirname, 'product_ids.npy'), self.test_df['product_id'])
+        np.save(os.path.join(dirname, 'predictions.npy'), self.test_df['prediction_nn'])
+        np.save(os.path.join(dirname, 'labels.npy'), self.test_df['label'])
 
 if __name__ == '__main__':
-
     base_dir = './'
     data_dir=os.path.join(base_dir, 'data')
-    nn = nn_model(data_dir)
 
-    # prediction_dir=os.path.join(base_dir, 'predictions_nn')
-    #
-    # model = nn.build_model();
+    dirname = 'predictions_nn'
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
 
+    nn = nn_model()
+    nn.build_model()
+    nn.predict()
 
 
 
