@@ -35,24 +35,21 @@ def select_products(x):
     return true_products, predicted_products
 
 
-# gbm_df = pd.DataFrame({
-#     'order_id': np.load('predictions_gbm/order_ids.npy'),
-#     'product_id': np.load('predictions_gbm/product_ids.npy'),
-#     'prediction_gbm': np.load('predictions_gbm/predictions.npy'),
-#     'label': np.load('predictions_gbm/labels.py')
-# })
+gbm_df = pd.DataFrame({
+    'order_id': np.load('predictions_gbm/order_ids.npy'),
+    'product_id': np.load('predictions_gbm/product_ids.npy'),
+    'prediction_gbm': np.load('predictions_gbm/predictions.npy'),
+    'label': np.load('predictions_gbm/labels.npy')
+})
 
 nn_df = pd.DataFrame({
     'order_id': np.load('predictions_nn/order_ids.npy'),
     'product_id': np.load('predictions_nn/product_ids.npy'),
-    'prediction_nn': np.load('predictions_nn/predictions.npy'),
-    'label': np.load('predictions_nn/labels.npy')
+    'prediction_nn': np.load('predictions_nn/predictions.npy')
 })
-# pred_df = gbm_df.merge(nn_df, how='left', on=['order_id', 'product_id'])
-pred_df = nn_df
+pred_df = gbm_df.merge(nn_df, how='left', on=['order_id', 'product_id'])
 
-# pred_df['prediction'] = .9*pred_df['prediction_gbm'] + .1*pred_df['prediction_nn']
-pred_df['prediction'] = pred_df['prediction_nn']
+pred_df['prediction'] = .9*pred_df['prediction_gbm'] + .1*pred_df['prediction_nn']
 
 gb = pred_df.groupby('order_id')
 dfs, order_ids = zip(*[(df, key) for key, df in gb])

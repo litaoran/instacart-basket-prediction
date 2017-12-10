@@ -1,7 +1,7 @@
 """
 https://www.kaggle.com/mmueller/f1-score-expectation-maximization-in-o-n
 a very useful f1 optimizer used frequently in kaggle
-copy code from the kaggle reference
+refer code from the kaggle reference
 """
 
 import numpy as np

@@ -7,7 +7,6 @@ import os
 
 class nn_model():
     def __init__(self):
-
         self.df = None
         self.training_df = None
         self.test_df = None
@@ -47,14 +46,14 @@ class nn_model():
     def build_model(self):
         print "start for modeling building"
         self.model = Sequential()
-        self.model.add(Dense(units=64, activation='relu', input_dim=self.data_dim))
+        self.model.add(Dense(units=1024, activation='relu', input_dim=self.data_dim))
         self.model.add(Dense(units=1, activation='sigmoid'))
 
         self.model.compile(loss='binary_crossentropy',
                       optimizer='adam',
                       metrics=['accuracy'])
 
-        self.model.fit(self.training_df[self.data_cols].values, self.training_df['label'].values, epochs=1, batch_size=4096,  validation_split=0.1)
+        self.model.fit(self.training_df[self.data_cols].values, self.training_df['label'].values, epochs=1000, batch_size=4096,  validation_split=0.1)
 
         # print "start for evalution"
         # scores = self.model.evaluate(self.df[self.data_cols].values, self.df['label'].values)
@@ -84,37 +83,3 @@ if __name__ == '__main__':
     nn.build_model()
     nn.predict()
 
-
-
-# # Create first network with Keras
-# from keras.models import Sequential
-# from keras.layers import Dense
-# import numpy
-# # fix random seed for reproducibility
-# seed = 7
-# numpy.random.seed(seed)
-# # load pima indians dataset
-# dataset = numpy.loadtxt("../../pima-indians-diabetes.csv", delimiter=",")
-# # split into input (X) and output (Y) variables
-# X = dataset[:,0:8]
-# Y = dataset[:,8]
-# # create model
-# model = Sequential()
-# model.add(Dense(12, input_dim=8, init='uniform', activation='relu'))
-# model.add(Dense(8, init='uniform', activation='relu'))
-# model.add(Dense(1, init='uniform', activation='sigmoid'))
-# # Compile model
-# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-# # Fit the model
-# model.fit(X, Y, epochs=150, batch_size=10,  verbose=2)
-# # calculate predictions
-# predictions = model.predict(X)
-#
-#
-# print predictions
-#
-#
-# # # round predictions
-# # rounded = [round(x[0]) for x in predictions]
-# # print len(rounded)
-# # print(rounded)
