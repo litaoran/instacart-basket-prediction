@@ -40,20 +40,25 @@ data = [np.load(os.path.join(data_dir, '{}.npy'.format(i)), mmap_mode='r') for i
 product_data = DataFrame(data=data).transpose()
 product_data.columns = data_cols
 
+print product_data.shape
 print product_data.dtypes
-print 'read!!!!'
+product_data.convert_objects(convert_numeric=True)
+print product_data.dtypes
 
-# train_dataset = product_data.loc[product_data['label'] == 'train']
-# test_dataset = product_data.loc[product_data['label'] == 'test']
+print '************* finish reading data'
 
-
-num_rows = product_data.shape[0]
 
 # product_name = np.zeros(shape=[num_rows, 30], dtype=np.int32)
 # product_name_length = np.zeros(shape=[num_rows], dtype=np.int8)
 # history_length = np.zeros(shape=[num_rows], dtype=np.int8)
 
+product_data = product_data.loc[product_data['label'] == 'train']
+# test_dataset = product_data.loc[product_data['label'] == 'test']
+
+
 is_ordered_history = to_categorical(product_data['is_ordered_history'], 2)
+print is_ordered_history.shape
+
 index_in_order_history = to_categorical(product_data['index_in_order_history'], 20)
 order_dow_history = to_categorical(product_data['order_dow_history'], 8)
 order_hour_history = to_categorical(product_data['order_hour_history'], 25)
@@ -61,6 +66,8 @@ days_since_prior_order_history = to_categorical(product_data['days_since_prior_o
 order_size_history = to_categorical(product_data['order_size_history'], 60)
 reorder_size_history = to_categorical(product_data['reorder_size_history'], 50)
 order_number_history = to_categorical(product_data['order_number_history'], 101)
+
+
 
 
 x_history = tf.concat([
@@ -72,7 +79,6 @@ x_history = tf.concat([
     order_size_history,
     reorder_size_history,
     order_number_history
-
     # ,
     # index_in_order_history_scalar,
     # order_dow_history_scalar,
@@ -85,19 +91,27 @@ x_history = tf.concat([
 
 # x = tf.concat([x_history, x_product, x_user], axis=2)
 
+print type(x_history)
+print x_history.shape()
+
+y_history = product_data['label']
+
+print x_history
 
 
-print 'aaaaaaaaaaaaaaaaaaa'
+print '************* finish concatenatiing data'
 
 
 
 timesteps = 100
 model = Sequential()
 
-model.add(Masking(mask_value=0., input_shape=(timesteps, x_history.shape[1] )))
+model.add(Masking(mask_value=0., input_shape=(x_history.shape[1], x_history.shape[2])))
 model.add(LSTM(128))
 model.add(TimeDistributed(Dense(1)))
 model.compile(loss='binary_crossentropy', optimizer='adam')
 print(model.summary())
+print '************* finish building model'
+
 
 
