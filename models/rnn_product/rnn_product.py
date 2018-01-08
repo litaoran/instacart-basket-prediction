@@ -207,8 +207,7 @@ class rnn(TFBaseModel):
 
     def calculate_outputs(self, x):
         h = lstm_layer(x, self.history_length, self.lstm_size)
-        c = wavenet(x, self.dilations, self.filter_widths, self.skip_channels, self.residual_channels)
-        h = tf.concat([h, c, x], axis=2)
+        h = tf.concat([h, x], axis=2)
 
         self.h_final = time_distributed_dense_layer(h, 50, activation=tf.nn.relu, scope='dense-1')
         y_hat = time_distributed_dense_layer(self.h_final, 1, activation=tf.nn.sigmoid, scope='dense-2')
@@ -239,15 +238,11 @@ if __name__ == '__main__':
         checkpoint_dir=os.path.join(base_dir, 'checkpoints'),
         prediction_dir=os.path.join(base_dir, 'predictions'),
         optimizer='adam',
-        learning_rate=.001,
-        lstm_size=300,
-        dilations=[2**i for i in range(6)],
-        filter_widths=[2]*6,
-        skip_channels=64,
-        residual_channels=128,
+        learning_rate=.01,
+        lstm_size=512,
         batch_size=128,
-        num_training_steps=200000,
-        early_stopping_steps=30000,
+        num_training_steps=30000,
+        early_stopping_steps=20000,
         warm_start_init_step=0,
         regularization_constant=0.0,
         keep_prob=1.0,
